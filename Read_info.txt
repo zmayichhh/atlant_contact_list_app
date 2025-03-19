@@ -1,7 +1,8 @@
 This is a guide on how to run the presented automation tests step by step:
 
 
-
+Github repository
+https://github.com/zmayichhh/atlant_contact_list_app
 
 
 run the following commands:
