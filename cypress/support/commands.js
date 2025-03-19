@@ -9,9 +9,14 @@
 // ***********************************************
 //
 //
+
+const { random } = require("lodash");
+
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
+// Cypress.Commands.add('randomString', (email, password) => { })
+
+
+
 //
 // -- This is a child command --
 // Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
