@@ -1,0 +1,65 @@
+This is a guide on how to run the presented automation tests step by step:
+
+
+
+
+
+run the following commands:
+
+
+
+1. Install the latest version of Node.js
+https://nodejs.org/en
+
+Add node.js as a Path to the Enviroment variables
+
+For Windows
+
+
+For macOS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Github: 
+https://github.com/zmayichhh/m-net.git
+
+Pokretanje automation testova:
+- Framework = Cypress
+
+
+- Preporucljivo je da se koristi Cypress graficki interfejs za pokretanje testova kako bi se stekao bolji dojam o tome šta testovi rade. Moguce je također i preko terminala, ali drugi nedostatak je što nekad na samom pocetku testa isti može da padne zbog problema na m-net stranici, ponovo pokretanje istog rješava problem, preko terminala se to ne vidi tacno.
+
+- Također je preporucljivo da se svaki Test Suite pokrece zasebno, a ne svi u isto vrijeme. Isti se može definisati u "cypress.config.js" fajlu.
+U istom imamo parametar "specPattern:" u kome je već definisan naziv odnosno putanja prvog Testnog Suita, a to je "homepage.js", nakon što uspješno pokrenemo isto, samo treba zamijeniti putanju u naziv drugog odnosno treceg Testnog Suita (meinTarif.js, mnetAPI.js).
+Svaki Testni Suite odgovara USE CASE testovima u Manuelnom Testnom Planu, iako se u automation dijelu nalaze samo 3 Testna Suita, njima su pokrivene osnovne funkcionalnosti pošto se testovi generalno ponavljaju na svakoj M-mnet stranici, svaka stranica od korisnika zahtijeva iste/slicne akcije.
+
+POKRETANJE TESTA:
+
+Otvoriti terminal i uci u folder Automation.
+Komanda    npx cypress open  Otvara novi prozor u kojem je već sve definisano, potrebno je izabrani end2end opciju, nakon toga browser u kojemu želimo pokrenuti testove, nakon toga odabrani naziv ranije pomenutog Testnog Suita koji bi se trebao pojaviti na ekranu. Testovi nakon toga bi se trebali sami pokrenuti (napomena, ukoliko bilo koji test padne na samom pocetku, samo refreshujte isti chrome ekran i testovi će se ponovo pokrenut i proci ce).
+
+Nakon što Test Suite izvrši sve komande, možemo zatvoriti prozor i u cypress.config.js  fajlu promijeniti putanju narednog Testnog Suita i ponoviti postupak od ranije.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+Drugi nacin pokretanja testova je kroz terminal. 
+Komanda:    npm run runtests  radi istu stvar samo kroz terminal
+Ukoliko želimo kroz njega pokrenuti svaki Testni Suite u isto vrijeme, potrebno je da u cypress.config.js  fajlu promijenimo specpattern putanju u 
+"cypress/integration/examples/*.js"
+
+Napomena:   npm run runtests   komanda se može definisati u package.json fajlu gdje se nalazi skripta za pokretanje cypress testova
