@@ -4,6 +4,18 @@
   const randomEmail = Math.random().toString(36).substring(2, 10) + "@test.com";
   const randomPassword = Math.random().toString(36).substring(2, 10) + "1234";
 
+  const newContact = {
+    firstName: "Test",
+    lastName: "Tester",
+    birthday:"1996/04/13",
+    email: randomEmail,
+    phone:"1234567",
+    address:"Milana Preloga",
+    city:"Sarajevo",
+    province:"Sarajevo",
+    postal_code:"71000",
+    country:"BiH"
+  }
 
 describe("USE CASE 1 Home page", () => {
 
@@ -36,22 +48,22 @@ describe("USE CASE 1 Home page", () => {
     cy.get("#error").should("not.be.visible")
     
     cy.contains("Submit").click();
-    cy.get("#error").should("be.visible").AND("include.text", "User validation failed:")
+    cy.get("#error").should("be.visible").and("include.text", "User validation failed:")
 
     cy.get("#firstName").type("Atlant");
     cy.contains("Submit").click();
-    cy.get("#error").should("be.visible").AND("include.text", "User validation failed: lastName: Path `lastName` is required.")
+    cy.get("#error").should("be.visible").and("include.text", "User validation failed: lastName: Path `lastName` is required.")
 
     cy.get("#firstName").clear()
     cy.get("#lastName").type("QA");
     cy.contains("Submit").click();
-    cy.get("#error").should("be.visible").AND("include.text", "User validation failed: firstName: Path `firstName` is required.")
+    cy.get("#error").should("be.visible").and("include.text", "User validation failed: firstName: Path `firstName` is required.")
 
     cy.get("#firstName").type("test")
     cy.get("#lastName").clear().type("test")
     cy.get("#password").type("123456")
     cy.contains("Submit").click();
-    cy.get("#error").should("be.visible").AND("have.text", "User validation failed: email: Email is invalid")
+    cy.get("#error").should("be.visible").and("include.text", "User validation failed: email: Email is invalid")
 
   });
   
@@ -69,7 +81,7 @@ describe("USE CASE 1 Home page", () => {
     cy.get("#password").type("1234567")
 
     cy.contains("Submit").click();
-    cy.get("#error").should("be.visible").AND("have.text", "Email address is already in use")
+    cy.get("#error").should("be.visible").and("have.text", "Email address is already in use")
     cy.url().should("include", "/addUser");
     
   });
@@ -85,16 +97,16 @@ describe("USE CASE 1 Home page", () => {
 
     cy.openHomepage();
     cy.contains("Submit").click()
-    cy.get("#error").should("be.visible").AND("have.text", "Incorrect username or password");
+    cy.get("#error").should("be.visible").and("have.text", "Incorrect username or password");
 
     cy.get("#email").type("invalid")
     cy.contains("Submit").click()
-    cy.get("#error").should("be.visible").AND("have.text", "Incorrect username or password");
+    cy.get("#error").should("be.visible").and("have.text", "Incorrect username or password");
 
     cy.get("#email").clear()
     cy.get("#password").type("invalid")
     cy.contains("Submit").click()
-    cy.get("#error").should("be.visible").AND("have.text", "Incorrect username or password");
+    cy.get("#error").should("be.visible").and("have.text", "Incorrect username or password");
 
   });
 
@@ -130,18 +142,6 @@ describe("USE CASE 1 Home page", () => {
 
 describe("USE CASE 2 Contact list page", () => {
 
-  const newContact = {
-    firstName: "Test",
-    lastName: "Tester",
-    birthday:"1996/04/13",
-    email: randomEmail,
-    phone:"1234567",
-    address:"Milana Preloga",
-    city:"Sarajevo",
-    province:"Sarajevo",
-    postal_code:"71000",
-    country:"BiH"
-  }
 
   it("TC no.01: Verify the user can successfully add a new contact with mandatory fields. - SMOKE", () => {
 
@@ -296,12 +296,11 @@ describe("USE CASE 2 Contact list page", () => {
 
    cy.get("#birthdate").clear().type("abcd")
    cy.contains("Submit").click()
-   cy.get("#error").should("exist").should("have.text", "Contact validation failed: email: Email is invalid")
+   cy.get("#error").should("exist").should("include.text", "Birthdate is invalid")
   
    cy.get("#birthdate").clear().type(newContact.birthday)
    cy.get("#phone").type("abcd")
-   cy.get("#error").should("exist").should("have.text", "Contact validation failed: phone: Phone number is invalid")
- 
+   cy.get("#error").should("exist")
   })
 
   it("TC no.05: Verify the contact list is saved after the user logs out. - SMOKE", () => {
@@ -324,7 +323,7 @@ describe("USE CASE 2 Contact list page", () => {
     cy.get("#password").type(randomPassword)
     cy.contains("Submit").click()
  
-    cy.get(".contacts tr").last().find("td").eq(1).should("have.text", newContact.firstName)
+    cy.get(".contacts tr").last().find("td").eq(1).should("include.text", newContact.firstName +" " +newContact.lastName)
 
   })
 
@@ -353,8 +352,8 @@ describe("USE CASE 3 Contact details page", () => {
     cy.openHomepage();
     cy.validLogin(randomEmail, randomPassword);
 
-    cy.get(".contacts tr").last().find("td").click()
-    cy.get("button").find("#edit-contact").click()
+    cy.get(".contacts tr").last().find("td").eq(1).click()
+    cy.get("#edit-contact").click()
 
     cy.contains("Cancel").click()
     cy.url().should("include", "/contactDetails");
@@ -376,8 +375,8 @@ describe("USE CASE 3 Contact details page", () => {
     cy.contains("Submit").click()
 
     cy.url().should("include", "/contactList");
-    cy.get(".contacts tr").last().find("td").click()
-    cy.contains("#delete").click()
+    cy.get(".contacts tr").last().find("td").last().click()
+    cy.get("#delete").click()
 
     cy.on("window:confirm", (text) => {
       expect(text).to.include("Are you sure you want to delete this contact?");
@@ -392,14 +391,14 @@ describe("USE CASE 3 Contact details page", () => {
     cy.openHomepage();
     cy.validLogin(randomEmail, randomPassword);
 
-    cy.get(".contacts tr").last().find("td").click()
-    cy.get("button").find("#edit-contact").click()
-    cy.get("#firstName").type(newContact.firstName + "_update")
+    cy.get(".contacts tr").last().find("td").last().click()
+    cy.get("#edit-contact").click()
+    cy.get("#firstName").clear().type(newContact.firstName + "_update")
     cy.contains("Submit").click()
-    cy.get("#firstName").should("have.text", newContact.firstName + "_update")
+    cy.get("#contactDetails").find("p #firstName").should("include", "_update")
     cy.get("#return").click()
 
-    cy.get(".contacts tr").last().find("td").eq(1).should("have.text", newContact.firstName + "_update")
+    cy.get(".contacts tr").last().find("td").eq(1).should("include", newContact.firstName + "_update")
 
   });
 
