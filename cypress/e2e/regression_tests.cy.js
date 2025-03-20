@@ -384,7 +384,6 @@ describe("USE CASE 2 Contact list page", () => {
 
   })
 
-
 });
 
 
@@ -460,12 +459,6 @@ describe("USE CASE 3 Contact details page", () => {
       return true;
     });
     cy.url().should("include", "/contactList");
-
-    cy.get(".contacts tr").last().find("td").then(())
-     
-
-    
-
 
   })
 
