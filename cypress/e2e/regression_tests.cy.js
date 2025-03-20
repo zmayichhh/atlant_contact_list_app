@@ -7,8 +7,7 @@
 
 describe("USE CASE 1 Home page", () => {
 
-
-  it("TC no. 01: Verify the user can successfully register a new profile.", () => {
+  it("TC no.01: Verify the user can successfully register a new profile.", () => {
 
     cy.visit("/");
     cy.viewport("macbook-16");
@@ -30,7 +29,7 @@ describe("USE CASE 1 Home page", () => {
 
   });
 
-  it("TC no. 02: Verify the user can't register a new profile using invalid inputs.", () => {
+  it("TC no.02: Verify the user can't register a new profile using invalid inputs.", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -61,7 +60,7 @@ describe("USE CASE 1 Home page", () => {
 
   });
 
-  it("TC no. 03: Verify user can't register a profile with an existing email address.", () => {
+  it("TC no.03: Verify user can't register a profile with an existing email address.", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -82,7 +81,7 @@ describe("USE CASE 1 Home page", () => {
     
   });
 
-  it("TC no. 04: Verify the user can successfully log in using an existing profile.", () => {
+  it("TC no.04: Verify the user can successfully log in using an existing profile.", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -95,7 +94,7 @@ describe("USE CASE 1 Home page", () => {
 
   });
 
-  it("TC no. 05: Verify the user can't log in using invalid inputs.", () => {
+  it("TC no.05: Verify the user can't log in using invalid inputs.", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -113,7 +112,7 @@ describe("USE CASE 1 Home page", () => {
 
   });
 
-  it("TC no. 06: Verify the user can successfully log out.", () => {
+  it("TC no.06: Verify the user can successfully log out.", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -130,7 +129,7 @@ describe("USE CASE 1 Home page", () => {
 
   });
 
-  it("TC no. 07: Verify the user can cancel the Sign in page.", () => {
+  it("TC no.07: Verify the user can cancel the Sign in page.", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -150,7 +149,6 @@ describe("USE CASE 1 Home page", () => {
 });
 
 
-
 describe("USE CASE 2 Contact list page", () => {
 
   const newContact = {
@@ -166,7 +164,7 @@ describe("USE CASE 2 Contact list page", () => {
     country:"BiH"
   }
 
-  it("TC no. 01: Verify the user can successfully add a new contact with mandatory fields.", () => {
+  it("TC no.01: Verify the user can successfully add a new contact with mandatory fields.", () => {
 
     //Precondition: Execute TC no. 04 from USE CASE 1
     cy.visit("/");
@@ -199,7 +197,7 @@ describe("USE CASE 2 Contact list page", () => {
    
   });
   
-  it("TC no. 02: Verify the user can successfully add a new contact with all fields.", () => {
+  it("TC no.02: Verify the user can successfully add a new contact with all fields.", () => {
 
        //Precondition: Execute TC no. 04 from USE CASE 1
        cy.visit("/");
@@ -265,13 +263,158 @@ describe("USE CASE 2 Contact list page", () => {
    
   });
 
+  //Remove the ".skip" if you really want to run this test too
+  it.skip("TC no.03: Verify maximum number of contacts in the list. - PERFORMANCE", () => {
+    
+   //Precondition: Execute TC no. 04 from USE CASE 1
+   cy.visit("/");
+   cy.viewport("macbook-16");
+   cy.contains("Contact List App");
+   cy.get("#email").type(randomEmail)
+   cy.get("#password").type(randomPassword)
+   cy.contains("Submit").click()
+   
+   cy.url().should("include", "/contactList");
+   cy.get("h1").should("have.text", "Contact List");
+
+   const numberOfContacts = 500 //add any number for testing
+
+   for (let i=0; i<numberOfContacts; i++) {
+
+   cy.get("p #add-contact").should("be.visible").click()
+   cy.url().should("include", "/addContact");
+   cy.get("h1").should("have.text", "Add Contact");
+
+   cy.get("#firstName").type(newContact.firstName)
+   cy.get("#lastName").type(newContact.lastName)
+   cy.get("#birthdate").type(newContact.birthday)
+   cy.get("#email").type(newContact.email)
+   cy.get("#phone").type(newContact.phone)
+   cy.get("#street1").type(newContact.address)
+   cy.get("#city").type(newContact.city)
+   cy.get("#stateProvince").type(newContact.province)
+   cy.get("#postalCode").type(newContact.postal_code)
+   cy.get("#country").type(newContact.country)
+   cy.contains("Submit").click()
+
+   cy.url().should("include", "/contactList");
+
+  }
+    
+
+  })
+
+  it("TC no.04: Verify the user can't add a new contact with invalid inputs.", () => {
+    
+  //Precondition: Execute TC no. 04 from USE CASE 1
+   cy.visit("/");
+   cy.viewport("macbook-16");
+   cy.contains("Contact List App");
+   cy.get("#email").type(randomEmail)
+   cy.get("#password").type(randomPassword)
+   cy.contains("Submit").click()
+   
+   cy.url().should("include", "/contactList");
+   cy.get("h1").should("have.text", "Contact List");
+
+   cy.get("p #add-contact").should("be.visible").click()
+   cy.url().should("include", "/addContact");
+   cy.get("h1").should("have.text", "Add Contact");
+
+   //Start checking the invalid inputs
+   cy.contains("Submit").click()
+   cy.get("#error").should("exist");
+
+   cy.get("#firstName").type(newContact.firstName)
+   cy.contains("Submit").click()
+   cy.get("#error").should("exist");
+
+   cy.get("#firstName").clear()
+   cy.get("#lastName").type(newContact.lastName)
+   cy.contains("Submit").click()
+   cy.get("#error").should("exist");
+
+   cy.get("#firstName").type(newContact.firstName)
+   cy.get("#birthdate").type("1234")
+   cy.contains("Submit").click()
+   cy.get("#error").should("exist");
+
+   cy.get("#birthdate").clear().type("13/04/1996")
+   cy.contains("Submit").click()
+   cy.get("#error").should("exist");
+
+   cy.get("#birthdate").clear().type("abcd")
+   cy.contains("Submit").click()
+   cy.get("#error").should("exist").should("have.text", "Contact validation failed: email: Email is invalid")
+  
+   cy.get("#birthdate").clear().type(newContact.birthday)
+   cy.get("#phone").type("abcd")
+   cy.get("#error").should("exist").should("have.text", "Contact validation failed: phone: Phone number is invalid")
+ 
+  })
+
+
 });
 
-/*
+
 describe("USE CASE 3 Contact details page", () => {
-  it("passes", () => {
+
+  it("TC no.01: Verify the user can cancel the Add Contacts page.", () => {
+
+    cy.visit("/");
+    cy.contains("Contact List App");
+    cy.get("#email").type(randomEmail)
+    cy.get("#password").type(randomPassword)
+    cy.contains("Submit").click()
+  
+    cy.url().should("include", "/contactList");
+    cy.get("h1").should("have.text", "Contact List");
+
+    cy.get("p #add-contact").should("be.visible").click()
+    cy.url().should("include", "/addContact");
+    cy.get("h1").should("have.text", "Add Contact");
+
+    cy.contains("Cancel").should("exist").click()
+    cy.url().should("include", "/contactList");
+    cy.get("h1").should("have.text", "Contact List");
+
   });
+
+  it("TC no.03: Verify the user can successfully delete an existing contact.", () => {
+
+
+    
+  })
+
+  it("TC no.04: Verify the user can successfully edit an existing contact.", () => {
+
+    cy.visit("/");
+    cy.contains("Contact List App");
+    cy.get("#email").type(randomEmail)
+    cy.get("#password").type(randomPassword)
+    cy.contains("Submit").click()
+  
+    cy.url().should("include", "/contactList");
+    cy.get("h1").should("have.text", "Contact List");
+
+    cy.get(".contacts tr").last().find("td").click()
+    cy.get("button").find("#edit-contact").click()
+    cy.get("#firstName").type(newContact.firstName + "_update")
+    cy.contains("Submit").click()
+    cy.get("#firstName").should("have.text", newContact.firstName + "_update")
+    cy.get("#return").click()
+
+    cy.get(".contacts tr").last().find("td").eq(1).should("have.text", newContact.firstName + "_update")
+
+  });
+
+
+
+
+
+
+
+
 });
 
 
-*/
