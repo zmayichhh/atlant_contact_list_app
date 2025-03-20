@@ -380,10 +380,62 @@ describe("USE CASE 3 Contact details page", () => {
 
   });
 
+  it("TC no.02: Verify the user can cancel the Edit Contacts page.", () => {
+
+    cy.visit("/");
+    cy.contains("Contact List App");
+    cy.get("#email").type(randomEmail)
+    cy.get("#password").type(randomPassword)
+    cy.contains("Submit").click()
+  
+    cy.url().should("include", "/contactList");
+    cy.get("h1").should("have.text", "Contact List");
+
+    cy.get(".contacts tr").last().find("td").click()
+    cy.get("button").find("#edit-contact").click()
+
+    cy.contains("Cancel").click()
+    cy.url().should("include", "/contactDetails");
+    
+  });
+
   it("TC no.03: Verify the user can successfully delete an existing contact.", () => {
 
+    //Executing TC no.01: from USE CASE 2
+    //Precondition: Execute TC no. 04 from USE CASE 1
+    cy.visit("/");
+    cy.viewport("macbook-16");
+    cy.contains("Contact List App");
+    cy.get("#email").type(randomEmail)
+    cy.get("#password").type(randomPassword)
+    cy.contains("Submit").click()
+    
+    cy.url().should("include", "/contactList");
+    cy.get("h1").should("have.text", "Contact List");
+
+    cy.get("p button").click()
+    cy.url().should("include", "/addContact");
+    cy.get("h1").should("have.text", "Add Contact");
+    cy.get("#firstName").type(newContact.firstName)
+    cy.get("#lastName").type(newContact.lastName)
+    cy.contains("Submit").click()
+
+    cy.url().should("include", "/contactList");
+    cy.get(".contacts tr").last().find("td").click()
+    cy.contains("#delete").click()
+
+    cy.on("window:confirm", (text) => {
+      expect(text).to.include("Are you sure you want to delete this contact?");
+      return true;
+    });
+    cy.url().should("include", "/contactList");
+
+    cy.get(".contacts tr").last().find("td").then(())
+     
 
     
+
+
   })
 
   it("TC no.04: Verify the user can successfully edit an existing contact.", () => {
