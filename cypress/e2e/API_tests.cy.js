@@ -1,6 +1,7 @@
 ///<reference types="cypress" />
 
-describe ("API tests", () => {
+
+describe("Users API tests", () => {
 
     const randomName = Math.random().toString().substring(2,7);
     const randomLastname = Math.random().toString().substring(2,7);
@@ -15,6 +16,7 @@ describe ("API tests", () => {
   }
  
   let userId;
+  let userToken;
  
  
     before("Verify a new user can be created", () => {
@@ -35,15 +37,13 @@ describe ("API tests", () => {
         expect($response.body.user.lastName).to.eq(userCredentials.lastName)
         expect($response.body.user.email).to.eq(userCredentials.email)
 
-        Cypress.env("userToken", $response.body.token);
-
-        //userToken = $response.body.token
+        userToken = $response.body.token
         userId = $response.body.user._id
 
         })
     })
     
- 
+   
     it("Verify an existing user can log in", () => {
 
     cy.request({
@@ -64,8 +64,6 @@ describe ("API tests", () => {
  
     it("Verify geting existing user profile", () => {
 
-        const userToken = Cypress.env("userToken");
-
         cy.request({
             method: "GET",
             url: "https://thinking-tester-contact-list.herokuapp.com/users/me",
@@ -81,18 +79,66 @@ describe ("API tests", () => {
    
     })
     
-    /*
-    //it("Verify Updating existing user profile", () => {
- 
-        const userToken = Cypress.env("userToken");
+    it("Verify a new contact is added", () => {
+
+        cy.request({
+        method: "POST",
+        url: "https://thinking-tester-contact-list.herokuapp.com/contacts",
+        headers: { Authorization: `Bearer ${userToken}`},
+        body: {
+            "firstName": userCredentials.firstName,
+            "lastName": userCredentials.lastName,
+            "birthdate": "1996/04/04",
+            "email": userCredentials.email,
+            "phone": "1234567",
+            "street1": "Milana Preloga",
+            "street2": "Milana Preloga",
+            "city": "Sarajevo",
+            "stateProvince": "KS",
+            "postalCode": "71000",
+            "country": "BiH"
+        }
+        }).then( ($response) => {
+   
+        expect($response.status).to.oneOf([200, 201]);
+        expect($response.body).to.have.property("_id")
+        expect($response.body.firstName).to.eq(userCredentials.firstName)
+        expect($response.body.lastName).to.eq(userCredentials.lastName)
+        expect($response.body.email).to.eq(userCredentials.email)
+
+        })
+
+
+    })
+
+    it("Verify we get the contact list", () => {
+
+        cy.request({
+        method: "GET",
+        url: "https://thinking-tester-contact-list.herokuapp.com/contacts/",
+        headers: { Authorization: `Bearer ${userToken}`},
+        }).then( ($response) => {
+   
+        expect($response.status).to.eq(200);
+        expect($response.body[0].firstName).to.eq(userCredentials.firstName)
+        expect($response.body[0].lastName).to.eq(userCredentials.lastName)
+        expect($response.body[0].email).to.eq(userCredentials.email)
+        })
+
+
+    })
+
+    it("Verify Updating existing user profile", () => {
+        
         cy.request({
             method: "PATCH",
             url: "https://thinking-tester-contact-list.herokuapp.com/users/me",
-            headers: { Authorization: `Bearer ${userToken}`},
+            headers: { Authorization: `Bearer ${userToken}`,
+                      "Content-Type": "application/json"},
             body: {
                 "firstName": userCredentials.firstName + "_update",
                 "lastName": userCredentials.lastName + "_update",
-                "email": userCredentials.email + "_update",
+                "email": "update_" + userCredentials.email,
                 "password": userCredentials.password + "_update"
             }
             }).then( ($response) => {
@@ -101,16 +147,15 @@ describe ("API tests", () => {
             expect($response.body._id).to.eq(userId)
             expect($response.body.firstName).to.eq(userCredentials.firstName + "_update")
             expect($response.body.lastName).to.eq(userCredentials.lastName + "_update")
-            expect($response.body.email).to.eq(userCredentials.email + "_update")
+            expect($response.body.email).to.eq("update_" + userCredentials.email)
 
             })
    
     })
-    */
-   
+    
+    /*
     it("Verify an existing user can log out", () => {
  
-        const userToken = Cypress.env("userToken");
         cy.request({
             method: "POST",
             url: "https://thinking-tester-contact-list.herokuapp.com/users/logout",
@@ -120,15 +165,16 @@ describe ("API tests", () => {
             })
 
     })
-    
-    it("Verify an existing user is deleted", () => {
+    */
+   //The below test fails if we execute this one, and vice versa
 
-        const userToken = Cypress.env("userToken");
+    it("Verify an existing user is deleted", () => {
 
         cy.request({
             method: "DELETE",
             url: "https://thinking-tester-contact-list.herokuapp.com/users/me",
-            headers: { Authorization: `Bearer ${userToken}`}
+            headers: { Authorization: `Bearer ${userToken}`,
+                       "Content-Type": "application/json"}
             }).then( ($response) => {
                 expect($response.status).to.eq(200)
             })
@@ -142,7 +188,14 @@ describe ("API tests", () => {
 
     })
  
- 
  })
- 
- 
+
+
+
+
+
+
+
+
+
+

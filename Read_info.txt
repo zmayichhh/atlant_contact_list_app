@@ -1,24 +1,47 @@
 This is a guide on how to run the presented automation tests step by step:
+The Test Plan is located inside the namesake folder
 
 
 Github repository
 https://github.com/zmayichhh/atlant_contact_list_app
 
 
-run the following commands:
+Preconditions:
 
-
-
-1. Install the latest version of Node.js
+Install the latest versions of:
+ 
+Node.js
 https://nodejs.org/en
+Git
+https://git-scm.com/downloads
+Any code editor (i.e VSCode)
+https://code.visualstudio.com/
 
-Add node.js as a Path to the Enviroment variables
-
-For Windows
 
 
-For macOS
+1. Open your code editor (i.e VSCode):
 
+- Create or open an existing empty folder where we will download the project files.
+
+
+2. Open the terminal inside the program:
+
+- You will now clone the remote repository, run the following command:
+"git clone https://github.com/zmayichhh/atlant_contact_list_app"
+
+
+3. Install the dependencies:
+
+- In the terminal, run the following command in order to install all available dependencies
+"npm install"
+
+
+4. Open the Cypress User Interface (recommended as you can see how the tests are being executed):
+
+- Run the following command
+"npx cypress open"
+
+- Click on any available file in order to start the execution (API or Regression tests file)
 
 
 
