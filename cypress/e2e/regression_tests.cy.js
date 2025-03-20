@@ -7,7 +7,7 @@
 
 describe("USE CASE 1 Home page", () => {
 
-  it("TC no.01: Verify the user can successfully register a new profile.", () => {
+  it("TC no.01: Verify the user can successfully register a new profile. - SMOKE", () => {
 
     cy.visit("/");
     cy.viewport("macbook-16");
@@ -81,7 +81,7 @@ describe("USE CASE 1 Home page", () => {
     
   });
 
-  it("TC no.04: Verify the user can successfully log in using an existing profile.", () => {
+  it("TC no.04: Verify the user can successfully log in using an existing profile. - SMOKE", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -94,7 +94,7 @@ describe("USE CASE 1 Home page", () => {
 
   });
 
-  it("TC no.05: Verify the user can't log in using invalid inputs.", () => {
+  it("TC no.05: Verify the user can't log in using invalid inputs. - SMOKE", () => {
 
     cy.visit("/");
     cy.contains("Contact List App");
@@ -164,7 +164,7 @@ describe("USE CASE 2 Contact list page", () => {
     country:"BiH"
   }
 
-  it("TC no.01: Verify the user can successfully add a new contact with mandatory fields.", () => {
+  it("TC no.01: Verify the user can successfully add a new contact with mandatory fields. - SMOKE", () => {
 
     //Precondition: Execute TC no. 04 from USE CASE 1
     cy.visit("/");
@@ -304,7 +304,7 @@ describe("USE CASE 2 Contact list page", () => {
 
   })
 
-  it("TC no.04: Verify the user can't add a new contact with invalid inputs.", () => {
+  it("TC no.04: Verify the user can't add a new contact with invalid inputs. - SMOKE", () => {
     
   //Precondition: Execute TC no. 04 from USE CASE 1
    cy.visit("/");
@@ -351,6 +351,37 @@ describe("USE CASE 2 Contact list page", () => {
    cy.get("#phone").type("abcd")
    cy.get("#error").should("exist").should("have.text", "Contact validation failed: phone: Phone number is invalid")
  
+  })
+
+  it("TC no.05: Verify the contact list is saved after the user logs out. - SMOKE", () => {
+
+    cy.visit("/");
+    cy.contains("Contact List App");
+    cy.get("#email").type(randomEmail)
+    cy.get("#password").type(randomPassword)
+    cy.contains("Submit").click()
+    
+    cy.url().should("include", "/contactList");
+    cy.get("h1").should("have.text", "Contact List");
+
+
+    cy.get("p button").click()
+    cy.url().should("include", "/addContact");
+    cy.get("h1").should("have.text", "Add Contact");
+    cy.get("#firstName").type(newContact.firstName)
+    cy.get("#lastName").type(newContact.lastName)
+    cy.contains("Submit").click()
+    cy.url().should("include", "/contactList");
+
+    cy.contains("Logout").click()
+    cy.contains("Contact List App");
+
+    cy.get("#email").type(randomEmail)
+    cy.get("#password").type(randomPassword)
+    cy.contains("Submit").click()
+ 
+    cy.get(".contacts tr").last().find("td").eq(1).should("have.text", newContact.firstName)
+
   })
 
 
@@ -459,13 +490,6 @@ describe("USE CASE 3 Contact details page", () => {
     cy.get(".contacts tr").last().find("td").eq(1).should("have.text", newContact.firstName + "_update")
 
   });
-
-
-
-
-
-
-
 
 });
 
