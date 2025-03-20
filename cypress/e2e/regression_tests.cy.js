@@ -9,10 +9,7 @@ describe("USE CASE 1 Home page", () => {
 
   it("TC no.01: Verify the user can successfully register a new profile. - SMOKE", () => {
 
-    cy.visit("/");
-    cy.viewport("macbook-16");
-    cy.contains("Contact List App");
-    cy.get(".main-content p").last().should("have.text", "Not yet a user? Click here to sign up!");
+    cy.openHomepage();
     cy.get("#signup").click()
 
     cy.contains("Add User");
@@ -31,11 +28,9 @@ describe("USE CASE 1 Home page", () => {
 
   it("TC no.02: Verify the user can't register a new profile using invalid inputs.", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get(".main-content p").last().should("have.text", "Not yet a user? Click here to sign up!");
-    cy.get("#signup").click()
+    cy.openHomepage();
 
+    cy.get("#signup").click()
     cy.contains("Add User");
     cy.url().should("include", "/addUser");
     cy.get("#error").should("not.be.visible")
@@ -59,12 +54,10 @@ describe("USE CASE 1 Home page", () => {
     cy.get("#error").should("be.visible").AND("have.text", "User validation failed: email: Email is invalid")
 
   });
-
+  
   it("TC no.03: Verify user can't register a profile with an existing email address.", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get(".main-content p").last().should("have.text", "Not yet a user? Click here to sign up!");
+    cy.openHomepage();
     cy.get("#signup").click()
 
     cy.contains("Add User");
@@ -83,21 +76,14 @@ describe("USE CASE 1 Home page", () => {
 
   it("TC no.04: Verify the user can successfully log in using an existing profile. - SMOKE", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-    
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
   });
 
   it("TC no.05: Verify the user can't log in using invalid inputs. - SMOKE", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
+    cy.openHomepage();
     cy.contains("Submit").click()
     cy.get("#error").should("be.visible").AND("have.text", "Incorrect username or password");
 
@@ -114,14 +100,8 @@ describe("USE CASE 1 Home page", () => {
 
   it("TC no.06: Verify the user can successfully log out.", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-    
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
     cy.contains("Logout").click()
     cy.contains("Contact List App");
@@ -131,9 +111,7 @@ describe("USE CASE 1 Home page", () => {
 
   it("TC no.07: Verify the user can cancel the Sign in page.", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get(".main-content p").last().should("have.text", "Not yet a user? Click here to sign up!");
+    cy.openHomepage();
     cy.get("#signup").click()
 
     cy.contains("Add User");
@@ -145,6 +123,7 @@ describe("USE CASE 1 Home page", () => {
 
 
   });
+
 
 });
 
@@ -167,15 +146,8 @@ describe("USE CASE 2 Contact list page", () => {
   it("TC no.01: Verify the user can successfully add a new contact with mandatory fields. - SMOKE", () => {
 
     //Precondition: Execute TC no. 04 from USE CASE 1
-    cy.visit("/");
-    cy.viewport("macbook-16");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-    
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
     //Gets the number of current rows
     cy.get("table tr").then((rowElements) => {
@@ -200,15 +172,8 @@ describe("USE CASE 2 Contact list page", () => {
   it("TC no.02: Verify the user can successfully add a new contact with all fields.", () => {
 
        //Precondition: Execute TC no. 04 from USE CASE 1
-       cy.visit("/");
-       cy.viewport("macbook-16");
-       cy.contains("Contact List App");
-       cy.get("#email").type(randomEmail)
-       cy.get("#password").type(randomPassword)
-       cy.contains("Submit").click()
-       
-       cy.url().should("include", "/contactList");
-       cy.get("h1").should("have.text", "Contact List");
+       cy.openHomepage();
+       cy.validLogin(randomEmail, randomPassword);
    
        cy.get("p #add-contact").should("be.visible").click()
        cy.url().should("include", "/addContact");
@@ -267,15 +232,8 @@ describe("USE CASE 2 Contact list page", () => {
   it.skip("TC no.03: Verify maximum number of contacts in the list. - PERFORMANCE", () => {
     
    //Precondition: Execute TC no. 04 from USE CASE 1
-   cy.visit("/");
-   cy.viewport("macbook-16");
-   cy.contains("Contact List App");
-   cy.get("#email").type(randomEmail)
-   cy.get("#password").type(randomPassword)
-   cy.contains("Submit").click()
-   
-   cy.url().should("include", "/contactList");
-   cy.get("h1").should("have.text", "Contact List");
+   cy.openHomepage();
+   cy.validLogin(randomEmail, randomPassword);
 
    const numberOfContacts = 500 //add any number for testing
 
@@ -307,15 +265,8 @@ describe("USE CASE 2 Contact list page", () => {
   it("TC no.04: Verify the user can't add a new contact with invalid inputs. - SMOKE", () => {
     
   //Precondition: Execute TC no. 04 from USE CASE 1
-   cy.visit("/");
-   cy.viewport("macbook-16");
-   cy.contains("Contact List App");
-   cy.get("#email").type(randomEmail)
-   cy.get("#password").type(randomPassword)
-   cy.contains("Submit").click()
-   
-   cy.url().should("include", "/contactList");
-   cy.get("h1").should("have.text", "Contact List");
+   cy.openHomepage();
+   cy.validLogin(randomEmail, randomPassword);
 
    cy.get("p #add-contact").should("be.visible").click()
    cy.url().should("include", "/addContact");
@@ -355,15 +306,8 @@ describe("USE CASE 2 Contact list page", () => {
 
   it("TC no.05: Verify the contact list is saved after the user logs out. - SMOKE", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-    
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
-
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
     cy.get("p button").click()
     cy.url().should("include", "/addContact");
@@ -391,14 +335,8 @@ describe("USE CASE 3 Contact details page", () => {
 
   it("TC no.01: Verify the user can cancel the Add Contacts page.", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-  
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
     cy.get("p #add-contact").should("be.visible").click()
     cy.url().should("include", "/addContact");
@@ -412,14 +350,8 @@ describe("USE CASE 3 Contact details page", () => {
 
   it("TC no.02: Verify the user can cancel the Edit Contacts page.", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-  
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
     cy.get(".contacts tr").last().find("td").click()
     cy.get("button").find("#edit-contact").click()
@@ -433,15 +365,8 @@ describe("USE CASE 3 Contact details page", () => {
 
     //Executing TC no.01: from USE CASE 2
     //Precondition: Execute TC no. 04 from USE CASE 1
-    cy.visit("/");
-    cy.viewport("macbook-16");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-    
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
     cy.get("p button").click()
     cy.url().should("include", "/addContact");
@@ -464,14 +389,8 @@ describe("USE CASE 3 Contact details page", () => {
 
   it("TC no.04: Verify the user can successfully edit an existing contact.", () => {
 
-    cy.visit("/");
-    cy.contains("Contact List App");
-    cy.get("#email").type(randomEmail)
-    cy.get("#password").type(randomPassword)
-    cy.contains("Submit").click()
-  
-    cy.url().should("include", "/contactList");
-    cy.get("h1").should("have.text", "Contact List");
+    cy.openHomepage();
+    cy.validLogin(randomEmail, randomPassword);
 
     cy.get(".contacts tr").last().find("td").click()
     cy.get("button").find("#edit-contact").click()
@@ -485,5 +404,4 @@ describe("USE CASE 3 Contact details page", () => {
   });
 
 });
-
 
